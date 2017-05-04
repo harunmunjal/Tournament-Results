@@ -4,8 +4,7 @@ import psycopg2
 def connect():
     try:
         db = psycopg2.connect("dbname={}".format(db_name))
-        cursor = db.cursor()
-        return db, cursor
+        return db
     except:
         print("Cannot connect!")
 
