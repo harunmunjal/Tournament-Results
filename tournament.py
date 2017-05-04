@@ -2,7 +2,12 @@ import psycopg2
 
 
 def connect():
-        return psycopg2.connect("dbname=tournament")
+    try:
+        db = psycopg2.connect("dbname={}".format(db_name))
+        cursor = db.cursor()
+        return db, cursor
+    except:
+        print("Cannot connect!")
 
 
 def deleteMatches():
@@ -41,8 +46,11 @@ def registerPlayer(name):
 def playerStandings():
     db = connect()
     cursor = db.cursor()
-    cursor.execute("SELECT p_id AS id, name, (SELECT COUNT(w_id) FROM match where w_id = p_id) as wins, (SELECT COUNT(m_id) from match where w_id = "
-              "p_id or l_id = p_id) as matches from Player GROUP BY p_id ORDER BY wins DESC")
+    cursor.execute("SELECT p_id AS id, name, (SELECT COUNT(w_id)"
+              "FROM match where w_id = p_id) as wins,"
+              "(SELECT COUNT(m_id) from match where w_id = "
+              "p_id or l_id = p_id) as match from Player "
+              "GROUP BY p_id ORDER BY wins DESC")
     result = cursor.fetchall()
     db.close()
     return result
